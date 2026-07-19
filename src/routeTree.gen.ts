@@ -9,12 +9,90 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrademarkRouteImport } from './routes/trademark'
+import { Route as TelegramRouteImport } from './routes/telegram'
+import { Route as ShopifyRouteImport } from './routes/shopify'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PromptRouteImport } from './routes/prompt'
+import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as NicheRouteImport } from './routes/niche'
+import { Route as LogsRouteImport } from './routes/logs'
+import { Route as ListingsRouteImport } from './routes/listings'
+import { Route as EtsyRouteImport } from './routes/etsy'
+import { Route as DesignRouteImport } from './routes/design'
+import { Route as CompetitionRouteImport } from './routes/competition'
 import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as AdsRouteImport } from './routes/ads'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrademarkRoute = TrademarkRouteImport.update({
+  id: '/trademark',
+  path: '/trademark',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TelegramRoute = TelegramRouteImport.update({
+  id: '/telegram',
+  path: '/telegram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopifyRoute = ShopifyRouteImport.update({
+  id: '/shopify',
+  path: '/shopify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromptRoute = PromptRouteImport.update({
+  id: '/prompt',
+  path: '/prompt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NicheRoute = NicheRouteImport.update({
+  id: '/niche',
+  path: '/niche',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsRoute = LogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EtsyRoute = EtsyRouteImport.update({
+  id: '/etsy',
+  path: '/etsy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignRoute = DesignRouteImport.update({
+  id: '/design',
+  path: '/design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompetitionRoute = CompetitionRouteImport.update({
+  id: '/competition',
+  path: '/competition',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentsRoute = AgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdsRoute = AdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +103,226 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ads': typeof AdsRoute
   '/agents': typeof AgentsRoute
+  '/competition': typeof CompetitionRoute
+  '/design': typeof DesignRoute
+  '/etsy': typeof EtsyRoute
+  '/listings': typeof ListingsRoute
+  '/logs': typeof LogsRoute
+  '/niche': typeof NicheRoute
+  '/orders': typeof OrdersRoute
+  '/prompt': typeof PromptRoute
+  '/settings': typeof SettingsRoute
+  '/shopify': typeof ShopifyRoute
+  '/telegram': typeof TelegramRoute
+  '/trademark': typeof TrademarkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ads': typeof AdsRoute
   '/agents': typeof AgentsRoute
+  '/competition': typeof CompetitionRoute
+  '/design': typeof DesignRoute
+  '/etsy': typeof EtsyRoute
+  '/listings': typeof ListingsRoute
+  '/logs': typeof LogsRoute
+  '/niche': typeof NicheRoute
+  '/orders': typeof OrdersRoute
+  '/prompt': typeof PromptRoute
+  '/settings': typeof SettingsRoute
+  '/shopify': typeof ShopifyRoute
+  '/telegram': typeof TelegramRoute
+  '/trademark': typeof TrademarkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ads': typeof AdsRoute
   '/agents': typeof AgentsRoute
+  '/competition': typeof CompetitionRoute
+  '/design': typeof DesignRoute
+  '/etsy': typeof EtsyRoute
+  '/listings': typeof ListingsRoute
+  '/logs': typeof LogsRoute
+  '/niche': typeof NicheRoute
+  '/orders': typeof OrdersRoute
+  '/prompt': typeof PromptRoute
+  '/settings': typeof SettingsRoute
+  '/shopify': typeof ShopifyRoute
+  '/telegram': typeof TelegramRoute
+  '/trademark': typeof TrademarkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agents'
+  fullPaths:
+    | '/'
+    | '/ads'
+    | '/agents'
+    | '/competition'
+    | '/design'
+    | '/etsy'
+    | '/listings'
+    | '/logs'
+    | '/niche'
+    | '/orders'
+    | '/prompt'
+    | '/settings'
+    | '/shopify'
+    | '/telegram'
+    | '/trademark'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agents'
-  id: '__root__' | '/' | '/agents'
+  to:
+    | '/'
+    | '/ads'
+    | '/agents'
+    | '/competition'
+    | '/design'
+    | '/etsy'
+    | '/listings'
+    | '/logs'
+    | '/niche'
+    | '/orders'
+    | '/prompt'
+    | '/settings'
+    | '/shopify'
+    | '/telegram'
+    | '/trademark'
+  id:
+    | '__root__'
+    | '/'
+    | '/ads'
+    | '/agents'
+    | '/competition'
+    | '/design'
+    | '/etsy'
+    | '/listings'
+    | '/logs'
+    | '/niche'
+    | '/orders'
+    | '/prompt'
+    | '/settings'
+    | '/shopify'
+    | '/telegram'
+    | '/trademark'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdsRoute: typeof AdsRoute
   AgentsRoute: typeof AgentsRoute
+  CompetitionRoute: typeof CompetitionRoute
+  DesignRoute: typeof DesignRoute
+  EtsyRoute: typeof EtsyRoute
+  ListingsRoute: typeof ListingsRoute
+  LogsRoute: typeof LogsRoute
+  NicheRoute: typeof NicheRoute
+  OrdersRoute: typeof OrdersRoute
+  PromptRoute: typeof PromptRoute
+  SettingsRoute: typeof SettingsRoute
+  ShopifyRoute: typeof ShopifyRoute
+  TelegramRoute: typeof TelegramRoute
+  TrademarkRoute: typeof TrademarkRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trademark': {
+      id: '/trademark'
+      path: '/trademark'
+      fullPath: '/trademark'
+      preLoaderRoute: typeof TrademarkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/telegram': {
+      id: '/telegram'
+      path: '/telegram'
+      fullPath: '/telegram'
+      preLoaderRoute: typeof TelegramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shopify': {
+      id: '/shopify'
+      path: '/shopify'
+      fullPath: '/shopify'
+      preLoaderRoute: typeof ShopifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prompt': {
+      id: '/prompt'
+      path: '/prompt'
+      fullPath: '/prompt'
+      preLoaderRoute: typeof PromptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/niche': {
+      id: '/niche'
+      path: '/niche'
+      fullPath: '/niche'
+      preLoaderRoute: typeof NicheRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs': {
+      id: '/logs'
+      path: '/logs'
+      fullPath: '/logs'
+      preLoaderRoute: typeof LogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etsy': {
+      id: '/etsy'
+      path: '/etsy'
+      fullPath: '/etsy'
+      preLoaderRoute: typeof EtsyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design': {
+      id: '/design'
+      path: '/design'
+      fullPath: '/design'
+      preLoaderRoute: typeof DesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/competition': {
+      id: '/competition'
+      path: '/competition'
+      fullPath: '/competition'
+      preLoaderRoute: typeof CompetitionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agents': {
       id: '/agents'
       path: '/agents'
       fullPath: '/agents'
       preLoaderRoute: typeof AgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ads': {
+      id: '/ads'
+      path: '/ads'
+      fullPath: '/ads'
+      preLoaderRoute: typeof AdsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +337,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdsRoute: AdsRoute,
   AgentsRoute: AgentsRoute,
+  CompetitionRoute: CompetitionRoute,
+  DesignRoute: DesignRoute,
+  EtsyRoute: EtsyRoute,
+  ListingsRoute: ListingsRoute,
+  LogsRoute: LogsRoute,
+  NicheRoute: NicheRoute,
+  OrdersRoute: OrdersRoute,
+  PromptRoute: PromptRoute,
+  SettingsRoute: SettingsRoute,
+  ShopifyRoute: ShopifyRoute,
+  TelegramRoute: TelegramRoute,
+  TrademarkRoute: TrademarkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
