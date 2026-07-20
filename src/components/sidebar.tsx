@@ -5,6 +5,7 @@ import {
   Terminal, Settings, Command,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { OfficeMini } from "./office-mini";
 
 const items = [
   { to: "/", label: "Mission Control", icon: Activity, group: "Core" },
@@ -66,6 +67,9 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+
+      <OfficeMini />
+
 
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         <div className="flex items-center justify-between">
