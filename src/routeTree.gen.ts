@@ -15,6 +15,7 @@ import { Route as ShopifyRouteImport } from './routes/shopify'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PromptRouteImport } from './routes/prompt'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as OfficeRouteImport } from './routes/office'
 import { Route as NicheRouteImport } from './routes/niche'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as ListingsRouteImport } from './routes/listings'
@@ -53,6 +54,11 @@ const PromptRoute = PromptRouteImport.update({
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficeRoute = OfficeRouteImport.update({
+  id: '/office',
+  path: '/office',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NicheRoute = NicheRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/listings': typeof ListingsRoute
   '/logs': typeof LogsRoute
   '/niche': typeof NicheRoute
+  '/office': typeof OfficeRoute
   '/orders': typeof OrdersRoute
   '/prompt': typeof PromptRoute
   '/settings': typeof SettingsRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/listings': typeof ListingsRoute
   '/logs': typeof LogsRoute
   '/niche': typeof NicheRoute
+  '/office': typeof OfficeRoute
   '/orders': typeof OrdersRoute
   '/prompt': typeof PromptRoute
   '/settings': typeof SettingsRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/listings': typeof ListingsRoute
   '/logs': typeof LogsRoute
   '/niche': typeof NicheRoute
+  '/office': typeof OfficeRoute
   '/orders': typeof OrdersRoute
   '/prompt': typeof PromptRoute
   '/settings': typeof SettingsRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/listings'
     | '/logs'
     | '/niche'
+    | '/office'
     | '/orders'
     | '/prompt'
     | '/settings'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/listings'
     | '/logs'
     | '/niche'
+    | '/office'
     | '/orders'
     | '/prompt'
     | '/settings'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/listings'
     | '/logs'
     | '/niche'
+    | '/office'
     | '/orders'
     | '/prompt'
     | '/settings'
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   ListingsRoute: typeof ListingsRoute
   LogsRoute: typeof LogsRoute
   NicheRoute: typeof NicheRoute
+  OfficeRoute: typeof OfficeRoute
   OrdersRoute: typeof OrdersRoute
   PromptRoute: typeof PromptRoute
   SettingsRoute: typeof SettingsRoute
@@ -267,6 +280,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/office': {
+      id: '/office'
+      path: '/office'
+      fullPath: '/office'
+      preLoaderRoute: typeof OfficeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/niche': {
@@ -345,6 +365,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingsRoute: ListingsRoute,
   LogsRoute: LogsRoute,
   NicheRoute: NicheRoute,
+  OfficeRoute: OfficeRoute,
   OrdersRoute: OrdersRoute,
   PromptRoute: PromptRoute,
   SettingsRoute: SettingsRoute,
@@ -355,13 +376,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
