@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import officeAsset from "@/assets/virtual-office.png.asset.json";
 
 export const Route = createFileRoute("/office")({
@@ -13,7 +13,6 @@ export const Route = createFileRoute("/office")({
   component: OfficePage,
 });
 
-// Chat lines that rotate through the bottom bar
 const chatter = [
   "OpenClaw Office: Agents ready for POD workflow",
   "Niche Research: 42 new keywords surfaced from Etsy trends",
@@ -25,13 +24,49 @@ const chatter = [
   "Niche Research → SEO: handing off top 10 clusters",
 ];
 
-// Approximate desk hotspots in % of the image (x, y) for blinking LEDs
-const leds = [
-  { x: 22.5, y: 40.5, hue: "var(--color-info)" },      // Niche Research
-  { x: 51,   y: 40,   hue: "var(--color-primary)" },   // Design
-  { x: 79,   y: 40.5, hue: "var(--color-warning)" },   // TM Check
-  { x: 36,   y: 68,   hue: "var(--color-info)" },      // SEO
-  { x: 68,   y: 68,   hue: "var(--color-primary)" },   // Store Sync
+// Desks in % of the image (x, y)
+type Desk = { id: string; name: string; x: number; y: number; hue: string };
+const desks: Desk[] = [
+  { id: "niche",  name: "Niche Research", x: 22.5, y: 40.5, hue: "var(--color-info)" },
+  { id: "design", name: "Design",         x: 51,   y: 40,   hue: "var(--color-primary)" },
+  { id: "tm",     name: "TM Check",       x: 79,   y: 40.5, hue: "var(--color-warning)" },
+  { id: "seo",    name: "SEO",            x: 36,   y: 68,   hue: "var(--color-info)" },
+  { id: "store",  name: "Store Sync",     x: 68,   y: 68,   hue: "var(--color-primary)" },
+];
+
+const deskById = Object.fromEntries(desks.map((d) => [d.id, d]));
+
+// Walking loops — each agent visits a sequence of desks (by id), pausing to "work"
+type Agent = {
+  id: string;
+  label: string;
+  emoji: string;
+  hue: string;
+  loop: string[]; // desk ids
+  workMs: number; // pause at each desk
+  travelMs: number; // travel time between desks
+};
+
+const agents: Agent[] = [
+  { id: "a1", label: "niche-bot",  emoji: "🧑‍💻", hue: "var(--color-info)",
+    loop: ["niche", "seo", "design", "niche"], workMs: 2200, travelMs: 2600 },
+  { id: "a2", label: "designer",   emoji: "🧑‍🎨", hue: "var(--color-primary)",
+    loop: ["design", "tm", "store", "design"], workMs: 2500, travelMs: 2400 },
+  { id: "a3", label: "tm-guard",   emoji: "🛡", hue: "var(--color-warning)",
+    loop: ["tm", "design", "seo", "tm"], workMs: 2000, travelMs: 2800 },
+  { id: "a4", label: "seo-writer", emoji: "✍️", hue: "var(--color-info)",
+    loop: ["seo", "store", "niche", "seo"], workMs: 2100, travelMs: 2500 },
+  { id: "a5", label: "publisher",  emoji: "📦", hue: "var(--color-primary)",
+    loop: ["store", "design", "tm", "store"], workMs: 2300, travelMs: 2700 },
+];
+
+// Data packets travelling between collaborating desks
+const packets: Array<{ from: string; to: string; hue: string; delay: number }> = [
+  { from: "niche",  to: "design", hue: "var(--color-info)",    delay: 0 },
+  { from: "design", to: "tm",     hue: "var(--color-primary)", delay: 900 },
+  { from: "tm",     to: "store",  hue: "var(--color-warning)", delay: 1600 },
+  { from: "seo",    to: "store",  hue: "var(--color-info)",    delay: 2300 },
+  { from: "design", to: "seo",    hue: "var(--color-primary)", delay: 3000 },
 ];
 
 function OfficePage() {
@@ -47,8 +82,70 @@ function OfficePage() {
     };
   }, []);
 
+  // Pre-compute per-agent keyframes as CSS strings
+  const styleSheet = useMemo(() => {
+    return agents
+      .map((ag) => {
+        const stops = ag.loop;
+        const cycle = stops.length; // segments = cycle (last returns to first via loop closure)
+        const totalMs = cycle * (ag.workMs + ag.travelMs);
+        // Build keyframes: at each stop → arrive, wait workMs, then travel to next
+        const kfLines: string[] = [];
+        let cursorMs = 0;
+        for (let i = 0; i < cycle; i++) {
+          const d = deskById[stops[i]];
+          const arrivePct = (cursorMs / totalMs) * 100;
+          kfLines.push(
+            `${arrivePct.toFixed(2)}% { left: ${d.x}%; top: ${d.y + 4}%; }`,
+          );
+          cursorMs += ag.workMs;
+          const departPct = (cursorMs / totalMs) * 100;
+          kfLines.push(
+            `${departPct.toFixed(2)}% { left: ${d.x}%; top: ${d.y + 4}%; }`,
+          );
+          cursorMs += ag.travelMs;
+        }
+        // final 100% snap back to first
+        const first = deskById[stops[0]];
+        kfLines.push(`100% { left: ${first.x}%; top: ${first.y + 4}%; }`);
+
+        // bobbing (simulate walking) applied via transform on inner span
+        return `
+          @keyframes walk-${ag.id} { ${kfLines.join("\n")} }
+          .walk-${ag.id} {
+            animation: walk-${ag.id} ${(totalMs / 1000).toFixed(2)}s linear infinite;
+          }
+        `;
+      })
+      .join("\n");
+  }, []);
+
+  // Packet keyframes
+  const packetStyles = useMemo(() => {
+    return packets
+      .map((p, i) => {
+        const from = deskById[p.from];
+        const to = deskById[p.to];
+        return `
+          @keyframes pkt-${i} {
+            0%   { left: ${from.x}%; top: ${from.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.6); }
+            10%  { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+            90%  { opacity: 1; }
+            100% { left: ${to.x}%; top: ${to.y}%; opacity: 0; transform: translate(-50%,-50%) scale(0.6); }
+          }
+          .pkt-${i} { animation: pkt-${i} 2.4s cubic-bezier(.6,.05,.4,1) infinite; animation-delay: ${p.delay}ms; }
+        `;
+      })
+      .join("\n");
+  }, []);
+
   return (
     <div className="space-y-4">
+      <style>{styleSheet + packetStyles + `
+        @keyframes bob { 0%,100% { transform: translate(-50%,-50%) translateY(0); } 50% { transform: translate(-50%,-50%) translateY(-3px); } }
+        .bob { animation: bob 420ms ease-in-out infinite; }
+      `}</style>
+
       <div className="flex items-end justify-between">
         <div>
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -61,17 +158,14 @@ function OfficePage() {
         </div>
         <div className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="dot bg-primary pulse-soft" /> 5 agents on floor
+            <span className="dot bg-primary pulse-soft" /> {agents.length} agents on floor
           </span>
           <span>{new Date().toLocaleTimeString()}</span>
         </div>
       </div>
 
       <div className="panel overflow-hidden">
-        <div
-          className="relative mx-auto w-full"
-          style={{ imageRendering: "pixelated" }}
-        >
+        <div className="relative mx-auto w-full" style={{ imageRendering: "pixelated" }}>
           <img
             src={officeAsset.url}
             alt="Virtual OpenClaw pixel office with agents at desks"
@@ -80,44 +174,105 @@ function OfficePage() {
             draggable={false}
           />
 
-          {/* Blinking monitor LEDs over each desk */}
-          {leds.map((l, i) => {
+          {/* Blinking monitor LEDs + typing shimmer bars over each desk */}
+          {desks.map((d, i) => {
             const on = (tick + i) % 3 !== 0;
             return (
-              <span
-                key={i}
-                className="pointer-events-none absolute"
-                style={{
-                  left: `${l.x}%`,
-                  top: `${l.y}%`,
-                  width: 8,
-                  height: 8,
-                  borderRadius: 9999,
-                  background: l.hue,
-                  boxShadow: `0 0 10px ${l.hue}`,
-                  opacity: on ? 0.95 : 0.25,
-                  transform: "translate(-50%, -50%)",
-                  transition: "opacity 200ms linear",
-                }}
-              />
+              <div key={d.id} className="pointer-events-none">
+                <span
+                  className="absolute"
+                  style={{
+                    left: `${d.x}%`,
+                    top: `${d.y}%`,
+                    width: 8,
+                    height: 8,
+                    borderRadius: 9999,
+                    background: d.hue,
+                    boxShadow: `0 0 10px ${d.hue}`,
+                    opacity: on ? 0.95 : 0.25,
+                    transform: "translate(-50%, -50%)",
+                    transition: "opacity 200ms linear",
+                  }}
+                />
+                <span
+                  className="absolute bar-shimmer"
+                  style={{
+                    left: `${d.x}%`,
+                    top: `${d.y - 6}%`,
+                    width: 46,
+                    height: 3,
+                    borderRadius: 2,
+                    transform: "translate(-50%, -50%)",
+                    opacity: 0.75,
+                  }}
+                />
+              </div>
             );
           })}
 
-          {/* Typing shimmer bars above each desk */}
-          {leds.map((l, i) => (
+          {/* Data packets flying between collaborating desks */}
+          {packets.map((p, i) => (
             <span
-              key={`bar-${i}`}
-              className="pointer-events-none absolute bar-shimmer"
+              key={`pkt-${i}`}
+              className={`pointer-events-none absolute pkt-${i}`}
               style={{
-                left: `${l.x}%`,
-                top: `${l.y - 6}%`,
-                width: 46,
-                height: 3,
-                borderRadius: 2,
-                transform: "translate(-50%, -50%)",
-                opacity: 0.75,
+                width: 8,
+                height: 8,
+                borderRadius: 9999,
+                background: p.hue,
+                boxShadow: `0 0 10px ${p.hue}, 0 0 2px ${p.hue}`,
               }}
             />
+          ))}
+
+          {/* Walking agents */}
+          {agents.map((ag) => (
+            <div
+              key={ag.id}
+              className={`pointer-events-none absolute walk-${ag.id}`}
+              style={{ left: 0, top: 0, willChange: "left,top" }}
+            >
+              <div
+                className="bob absolute flex flex-col items-center"
+                style={{ transform: "translate(-50%,-50%)" }}
+              >
+                <span
+                  className="font-mono"
+                  style={{
+                    fontSize: 9,
+                    color: ag.hue,
+                    background: "var(--color-background)",
+                    border: `1px solid ${ag.hue}`,
+                    padding: "0 4px",
+                    borderRadius: 2,
+                    whiteSpace: "nowrap",
+                    marginBottom: 2,
+                    boxShadow: `0 0 8px color-mix(in oklab, ${ag.hue} 40%, transparent)`,
+                  }}
+                >
+                  {ag.label}
+                </span>
+                <span
+                  style={{
+                    fontSize: 18,
+                    filter: `drop-shadow(0 0 6px ${ag.hue})`,
+                    lineHeight: 1,
+                  }}
+                >
+                  {ag.emoji}
+                </span>
+                <span
+                  style={{
+                    width: 14,
+                    height: 3,
+                    marginTop: 1,
+                    borderRadius: 2,
+                    background: "rgba(0,0,0,0.5)",
+                    filter: "blur(1px)",
+                  }}
+                />
+              </div>
+            </div>
           ))}
 
           {/* Live status overlay chip */}
@@ -127,7 +282,7 @@ function OfficePage() {
           </div>
         </div>
 
-        {/* Chatter ticker — mirrors the bottom bar in the reference */}
+        {/* Chatter ticker */}
         <div className="flex items-center gap-3 border-t border-border bg-background/60 px-4 py-3">
           <div className="grid h-8 w-8 place-items-center rounded-md border border-border bg-card font-mono text-sm">
             🤖
