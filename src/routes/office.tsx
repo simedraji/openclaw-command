@@ -47,17 +47,13 @@ type Agent = {
   travelMs: number; // travel time between desks
 };
 
+// Each agent stays at their own desk and sways gently in place.
 const agents: Agent[] = [
-  { id: "a1", label: "niche-bot",  emoji: "🧑‍💻", hue: "var(--color-info)",
-    loop: ["niche", "seo", "design", "niche"], workMs: 2200, travelMs: 2600 },
-  { id: "a2", label: "designer",   emoji: "🧑‍🎨", hue: "var(--color-primary)",
-    loop: ["design", "tm", "store", "design"], workMs: 2500, travelMs: 2400 },
-  { id: "a3", label: "tm-guard",   emoji: "🛡", hue: "var(--color-warning)",
-    loop: ["tm", "design", "seo", "tm"], workMs: 2000, travelMs: 2800 },
-  { id: "a4", label: "seo-writer", emoji: "✍️", hue: "var(--color-info)",
-    loop: ["seo", "store", "niche", "seo"], workMs: 2100, travelMs: 2500 },
-  { id: "a5", label: "publisher",  emoji: "📦", hue: "var(--color-primary)",
-    loop: ["store", "design", "tm", "store"], workMs: 2300, travelMs: 2700 },
+  { id: "a1", label: "niche-bot",  emoji: "🧑‍💻", hue: "var(--color-info)",    loop: ["niche"],  workMs: 4200, travelMs: 3600 },
+  { id: "a2", label: "designer",   emoji: "🧑‍🎨", hue: "var(--color-primary)", loop: ["design"], workMs: 4600, travelMs: 3800 },
+  { id: "a3", label: "tm-guard",   emoji: "🛡",   hue: "var(--color-warning)", loop: ["tm"],     workMs: 4000, travelMs: 3400 },
+  { id: "a4", label: "seo-writer", emoji: "✍️",  hue: "var(--color-info)",    loop: ["seo"],    workMs: 4400, travelMs: 3700 },
+  { id: "a5", label: "publisher",  emoji: "📦",  hue: "var(--color-primary)", loop: ["store"],  workMs: 4300, travelMs: 3900 },
 ];
 
 // Data packets travelling between collaborating desks
@@ -142,8 +138,13 @@ function OfficePage() {
   return (
     <div className="space-y-4">
       <style>{styleSheet + packetStyles + `
-        @keyframes bob { 0%,100% { transform: translate(-50%,-50%) translateY(0); } 50% { transform: translate(-50%,-50%) translateY(-3px); } }
-        .bob { animation: bob 420ms ease-in-out infinite; }
+        @keyframes bob {
+          0%,100% { transform: translate(-50%,-50%) translate(0, 0); }
+          25%     { transform: translate(-50%,-50%) translate(-1px, -2px); }
+          50%     { transform: translate(-50%,-50%) translate(0, -3px); }
+          75%     { transform: translate(-50%,-50%) translate(1px, -1px); }
+        }
+        .bob { animation: bob 2.8s ease-in-out infinite; }
       `}</style>
 
       <div className="flex items-end justify-between">
