@@ -138,8 +138,13 @@ function OfficePage() {
   return (
     <div className="space-y-4">
       <style>{styleSheet + packetStyles + `
-        @keyframes bob { 0%,100% { transform: translate(-50%,-50%) translateY(0); } 50% { transform: translate(-50%,-50%) translateY(-3px); } }
-        .bob { animation: bob 420ms ease-in-out infinite; }
+        @keyframes bob {
+          0%,100% { transform: translate(-50%,-50%) translate(0, 0); }
+          25%     { transform: translate(-50%,-50%) translate(-1px, -2px); }
+          50%     { transform: translate(-50%,-50%) translate(0, -3px); }
+          75%     { transform: translate(-50%,-50%) translate(1px, -1px); }
+        }
+        .bob { animation: bob 2.8s ease-in-out infinite; }
       `}</style>
 
       <div className="flex items-end justify-between">
