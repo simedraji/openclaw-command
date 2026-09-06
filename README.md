@@ -84,3 +84,90 @@ npm run lint
 تعدّلو وتعاود توزّعو غير لأغراض غير تجارية، وخصّك تبقي إشعار حقوق الملكية
 ونسخة من الترخيص مع أي نسخة من المشروع. الاستعمال التجاري كيحتاج ترخيص منفصل
 ومكتوب من صاحب الحقوق.
+
+---
+
+# English Instructions
+
+## About the project
+
+MerchIQ × OpenClaw Dashboard is a local control panel for OpenClaw. OpenClaw,
+Shopify, Etsy, Telegram, and model credentials are never stored in the browser.
+
+The browser connects to a local bridge at `127.0.0.1:18790`. The bridge uses
+your already-authenticated `openclaw` CLI to communicate with the running
+Gateway.
+
+## Installation
+
+Make sure you have the following installed:
+
+- Node.js and npm.
+- OpenClaw CLI, already configured and authenticated.
+
+From the project folder, install the dependencies:
+
+```powershell
+npm install
+```
+
+## Start on Windows
+
+Open three PowerShell windows in the project folder.
+
+```powershell
+# Window 1 — only if the Gateway is not already running
+openclaw gateway
+```
+
+```powershell
+# Window 2 — start the local dashboard bridge
+npm run bridge
+```
+
+```powershell
+# Window 3 — start the dashboard interface
+npm run dev
+```
+
+Open the local address printed by Vite, normally `http://localhost:8080`.
+
+## First checks
+
+Run these commands before opening the dashboard:
+
+```powershell
+openclaw status --all
+openclaw health --json
+openclaw agents list --json
+```
+
+If the bridge cannot find OpenClaw, copy `.env.example` to `.env`, set
+`OPENCLAW_COMMAND` to the full path of `openclaw.cmd`, and restart the bridge.
+Never put API tokens in the React app or in `VITE_*` variables.
+
+## Available features
+
+- Dashboard connection status and configured agent list.
+- OpenClaw tasks launched from Mission Control, Agents, Niche, Design,
+  Trademark, Etsy, and Shopify pages.
+- Live task progress and results for the current bridge session.
+- A local-only bridge that accepts requests from `localhost` and `127.0.0.1`.
+
+## Validation
+
+```powershell
+npm run format
+npm run build
+npm run lint
+```
+
+## Copyright and license
+
+Copyright © 2026 Mohamed Raji. All rights reserved.
+
+This project is licensed under the
+[PolyForm Noncommercial License 1.0.0](LICENSE.md). You may use, modify, and
+redistribute it only for noncommercial purposes. Every redistributed copy must
+keep the copyright notice and a copy of the license. Commercial use requires a
+separate written license from the copyright holder.
