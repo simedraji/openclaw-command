@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader, Panel, Btn, StatCard } from "@/components/ui-kit";
+import { PageHeader, Panel, StatCard } from "@/components/ui-kit";
 import { agents } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/status-badge";
+import { OpenClawTaskButton } from "@/components/openclaw-task-button";
 
 export const Route = createFileRoute("/shopify")({
   component: ShopifyPage,
@@ -14,7 +15,23 @@ function ShopifyPage() {
       <PageHeader
         title="Shopify Tools"
         subtitle="Local automation surface for your Shopify store."
-        actions={<><Btn>Sync store</Btn><Btn variant="primary">Run all Shopify sub-agents</Btn></>}
+        actions={
+          <>
+            <OpenClawTaskButton
+              variant="default"
+              label="Refresh Shopify store"
+              message="Review the configured Shopify integration and return the current store sync status. Do not modify products, collections, orders, inventory, or customer data."
+            >
+              Sync store
+            </OpenClawTaskButton>
+            <OpenClawTaskButton
+              label="Shopify optimization review"
+              message="Run a safe Shopify store optimization review. Return a prioritized product, collection, SEO, and fulfillment plan. Do not change the store or contact customers without my approval."
+            >
+              Run Shopify workflow
+            </OpenClawTaskButton>
+          </>
+        }
       />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard label="Store" value="merchiq-lab" sub=".myshopify.com" />
@@ -31,7 +48,9 @@ function ShopifyPage() {
                 <StatusBadge status={s.status} />
               </div>
               <div className="mt-1 text-[11px] text-muted-foreground">{s.task}</div>
-              <div className="mt-2 h-1 overflow-hidden rounded bg-muted"><div className="h-full bg-primary" style={{ width: `${s.progress}%` }} /></div>
+              <div className="mt-2 h-1 overflow-hidden rounded bg-muted">
+                <div className="h-full bg-primary" style={{ width: `${s.progress}%` }} />
+              </div>
             </div>
           ))}
         </div>

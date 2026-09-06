@@ -1,70 +1,67 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader, Panel, Btn, Field, Input, Select } from "@/components/ui-kit";
-import { Save, Zap } from "lucide-react";
+import { PageHeader, Panel, Btn } from "@/components/ui-kit";
+import { useOpenClawDashboard } from "@/hooks/use-openclaw";
+import { RefreshCw, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
 
 function SettingsPage() {
+  const { data, isFetching, refetch } = useOpenClawDashboard();
   return (
     <div className="space-y-5">
       <PageHeader
         title="Settings"
-        subtitle="Local configuration only. Nothing leaves this machine unless a token is set."
+        subtitle="This dashboard never stores or displays your OpenClaw credentials."
         actions={
-          <>
-            <Btn><Zap className="h-3.5 w-3.5" /> Test connections</Btn>
-            <Btn variant="primary"><Save className="h-3.5 w-3.5" /> Save config locally</Btn>
-          </>
+          <Btn type="button" disabled={isFetching} onClick={() => void refetch()}>
+            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} /> Test
+            connection
+          </Btn>
         }
       />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Panel title="OpenClaw gateway">
           <div className="space-y-3">
-            <Field label="Gateway URL"><Input defaultValue="http://localhost:18789" /></Field>
-            <Field label="Auth token"><Input type="password" defaultValue="oc_local_9f83…" /></Field>
-          </div>
-        </Panel>
-
-        <Panel title="Local models">
-          <div className="space-y-3">
-            <Field label="Local model (OpenClaw)">
-              <Select defaultValue="llama">
-                <option value="llama">llama-3.1-70b (Q4_K_M)</option>
-                <option value="mistral">mistral-large-instruct</option>
-                <option value="qwen">qwen2.5-72b-instruct</option>
-              </Select>
-            </Field>
-            <Field label="Ollama model">
-              <Select defaultValue="deepseek">
-                <option value="deepseek">deepseek-coder-v2:16b</option>
-                <option value="llama3">llama3.1:8b</option>
-                <option value="qwen">qwen2.5:14b</option>
-              </Select>
-            </Field>
-          </div>
-        </Panel>
-
-        <Panel title="API keys">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <Field label="OpenRouter"><Input type="password" defaultValue="or_sk_…" /></Field>
-            <Field label="Etsy API key"><Input type="password" defaultValue="etsy_…" /></Field>
-            <Field label="Etsy secret"><Input type="password" defaultValue="etsy_secret_…" /></Field>
-            <Field label="Shopify admin"><Input type="password" defaultValue="shpat_…" /></Field>
-            <Field label="Shopify store"><Input defaultValue="merchiq-lab.myshopify.com" /></Field>
-            <Field label="Facebook Ads token"><Input type="password" defaultValue="EAAB…" /></Field>
-          </div>
-        </Panel>
-
-        <Panel title="Telegram">
-          <div className="space-y-3">
-            <Field label="Bot token"><Input type="password" defaultValue="7893:AAF…" /></Field>
-            <Field label="Admin chat ID"><Input defaultValue="1029384756" /></Field>
-            <div className="rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-[11px] text-primary">
-              Bot online · last ping 12ms · @merchiq_local_bot
+            <div
+              className={`rounded-md border p-3 text-[12px] ${data?.connected ? "border-primary/30 bg-primary/10 text-primary" : "border-destructive/30 bg-destructive/10 text-destructive"}`}
+            >
+              {data?.connected
+                ? "OpenClaw Gateway is reachable."
+                : "Gateway not connected. Start OpenClaw, then start the bridge."}
             </div>
+            <div className="rounded-md border border-border bg-background/50 p-3 font-mono text-[11px] text-muted-foreground">
+              Dashboard bridge: http://127.0.0.1:18790
+              <br />
+              Gateway: managed by your local OpenClaw CLI
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Security model">
+          <div className="space-y-3">
+            <div className="flex gap-2 text-[12px] text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
+              The browser talks only to a local bridge. The bridge invokes your
+              already-authenticated OpenClaw CLI, so tokens and API keys stay outside the browser.
+            </div>
+            <div className="rounded-md border border-warning/30 bg-warning/5 p-3 text-[11px] text-warning">
+              Keep the bridge bound to 127.0.0.1. Do not expose port 18790 on your VPS, LAN,
+              Cloudflare Tunnel, or public domain.
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Configure OpenClaw">
+          <div className="space-y-3">
+            <div className="text-[12px] text-muted-foreground">
+              Configure models, Telegram, Etsy, Shopify, and any MCP tools in OpenClaw itself. This
+              dashboard reads the configured agents and sends tasks to them; it does not duplicate
+              or reveal your integrations.
+            </div>
+            <pre className="overflow-auto rounded-md border border-border bg-background/60 p-3 font-mono text-[11px] text-muted-foreground">{`openclaw status --all\nopenclaw agents list --json\nopenclaw gateway`}</pre>
           </div>
         </Panel>
       </div>

@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader, Panel, Btn, StatCard } from "@/components/ui-kit";
+import { PageHeader, Panel, StatCard } from "@/components/ui-kit";
 import { agents } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/status-badge";
+import { OpenClawTaskButton } from "@/components/openclaw-task-button";
 
 export const Route = createFileRoute("/etsy")({
   component: EtsyPage,
@@ -14,7 +15,23 @@ function EtsyPage() {
       <PageHeader
         title="Etsy Tools"
         subtitle="Local automation surface for Etsy shops."
-        actions={<><Btn>Refresh shop</Btn><Btn variant="primary">Run all Etsy sub-agents</Btn></>}
+        actions={
+          <>
+            <OpenClawTaskButton
+              variant="default"
+              label="Refresh Etsy shop"
+              message="Review the configured Etsy integration and return a current shop sync summary. Do not modify listings or publish anything."
+            >
+              Refresh shop
+            </OpenClawTaskButton>
+            <OpenClawTaskButton
+              label="Etsy optimization review"
+              message="Run a safe Etsy optimization review. Analyze drafts and listing opportunities, then return a proposed plan. Do not create, edit, publish, spend money, or contact customers without my approval."
+            >
+              Run Etsy workflow
+            </OpenClawTaskButton>
+          </>
+        }
       />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard label="Shop" value="MerchIQLab" sub="etsy.com/shop" />
@@ -31,7 +48,9 @@ function EtsyPage() {
                 <StatusBadge status={s.status} />
               </div>
               <div className="mt-1 text-[11px] text-muted-foreground">{s.task}</div>
-              <div className="mt-2 h-1 overflow-hidden rounded bg-muted"><div className="h-full bg-primary" style={{ width: `${s.progress}%` }} /></div>
+              <div className="mt-2 h-1 overflow-hidden rounded bg-muted">
+                <div className="h-full bg-primary" style={{ width: `${s.progress}%` }} />
+              </div>
             </div>
           ))}
         </div>

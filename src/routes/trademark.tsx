@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader, Panel, Btn, Field, Input } from "@/components/ui-kit";
+import { useState } from "react";
+import { PageHeader, Panel, Field, Input } from "@/components/ui-kit";
 import { Shield, ShieldAlert } from "lucide-react";
+import { OpenClawTaskButton } from "@/components/openclaw-task-button";
 
 export const Route = createFileRoute("/trademark")({
   component: TrademarkPage,
 });
 
 function TrademarkPage() {
+  const [phrase, setPhrase] = useState("Girl Dad Club");
   const risk = 62; // medium
   const label = risk < 40 ? "Safe" : risk < 70 ? "Medium risk" : "High risk";
   const tone = risk < 40 ? "text-primary" : risk < 70 ? "text-warning" : "text-destructive";
@@ -15,8 +18,17 @@ function TrademarkPage() {
       <PageHeader title="Trademark Check" subtitle="Local AI phrase & logo risk screening." />
       <Panel>
         <div className="flex flex-wrap items-end gap-3">
-          <div className="min-w-[320px] flex-1"><Field label="Phrase or design idea"><Input defaultValue="Girl Dad Club" /></Field></div>
-          <Btn variant="primary"><Shield className="h-3.5 w-3.5" /> Check risk</Btn>
+          <div className="min-w-[320px] flex-1">
+            <Field label="Phrase or design idea">
+              <Input value={phrase} onChange={(event) => setPhrase(event.target.value)} />
+            </Field>
+          </div>
+          <OpenClawTaskButton
+            label={`Trademark review: ${phrase}`}
+            message={`Screen this POD phrase or design concept for trademark risk: "${phrase}". Use any configured trademark research tools, cite the uncertainty, suggest safer alternatives, and clearly state that this is not legal advice. Do not file, contact anyone, or publish anything.`}
+          >
+            <Shield className="h-3.5 w-3.5" /> Check risk
+          </OpenClawTaskButton>
         </div>
       </Panel>
 
@@ -29,10 +41,15 @@ function TrademarkPage() {
             </div>
             <div className="relative mt-4 h-2 overflow-hidden rounded-full bg-muted">
               <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-primary via-warning to-destructive opacity-70" />
-              <div className="absolute top-[-2px] h-3 w-0.5 bg-foreground" style={{ left: `${risk}%` }} />
+              <div
+                className="absolute top-[-2px] h-3 w-0.5 bg-foreground"
+                style={{ left: `${risk}%` }}
+              />
             </div>
             <div className="mt-1 flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-              <span>Safe</span><span>Medium</span><span>High</span>
+              <span>Safe</span>
+              <span>Medium</span>
+              <span>High</span>
             </div>
           </div>
         </Panel>
@@ -40,7 +57,12 @@ function TrademarkPage() {
         <Panel title="Similar registered phrases" className="lg:col-span-2">
           <table className="w-full text-[12px]">
             <thead className="text-left text-[10px] uppercase tracking-widest text-muted-foreground">
-              <tr><th className="pb-1">Phrase</th><th>Owner</th><th>Class</th><th>Status</th></tr>
+              <tr>
+                <th className="pb-1">Phrase</th>
+                <th>Owner</th>
+                <th>Class</th>
+                <th>Status</th>
+              </tr>
             </thead>
             <tbody>
               {[
@@ -63,8 +85,19 @@ function TrademarkPage() {
 
       <Panel title="Safer alternatives">
         <div className="flex flex-wrap gap-2">
-          {["Proud Girl Dad", "Dad of Daughters", "Raising Queens", "Girl Dad Era", "Team Girl Dad"].map((a) => (
-            <span key={a} className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[12px] text-primary">{a}</span>
+          {[
+            "Proud Girl Dad",
+            "Dad of Daughters",
+            "Raising Queens",
+            "Girl Dad Era",
+            "Team Girl Dad",
+          ].map((a) => (
+            <span
+              key={a}
+              className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[12px] text-primary"
+            >
+              {a}
+            </span>
           ))}
         </div>
       </Panel>

@@ -8,7 +8,9 @@ export function AiOffice() {
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div>
           <div className="text-[13px] font-semibold">Local AI Office</div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Live agents · sub-agents</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Live agents · sub-agents
+          </div>
         </div>
         <span className="dot bg-primary pulse-soft" />
       </div>
@@ -17,7 +19,9 @@ export function AiOffice() {
           <div key={a.id} className="panel p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-sm">{a.icon}</div>
+                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-sm">
+                  {a.icon}
+                </div>
                 <div className="leading-tight">
                   <div className="text-[12px] font-medium">{a.name}</div>
                   <div className="text-[10px] text-muted-foreground">{a.role}</div>
@@ -34,7 +38,9 @@ export function AiOffice() {
             </div>
             <div className="mt-2 rounded-md border border-border bg-background/60 p-1.5 font-mono text-[10px] leading-relaxed text-muted-foreground max-h-16 overflow-hidden">
               {a.logs.slice(-2).map((l, i) => (
-                <div key={i} className="truncate">{l}</div>
+                <div key={i} className="truncate">
+                  {l}
+                </div>
               ))}
             </div>
             <details className="group mt-2">
@@ -43,7 +49,10 @@ export function AiOffice() {
               </summary>
               <div className="mt-1.5 space-y-1">
                 {a.subAgents.map((s) => (
-                  <div key={s.name} className="flex items-center justify-between rounded-md border border-border/50 px-2 py-1">
+                  <div
+                    key={s.name}
+                    className="flex items-center justify-between rounded-md border border-border/50 px-2 py-1"
+                  >
                     <div className="min-w-0">
                       <div className="truncate text-[11px]">{s.name}</div>
                       <div className="truncate text-[10px] text-muted-foreground">{s.task}</div>

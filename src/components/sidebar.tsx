@@ -1,8 +1,21 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Activity, Bot, ShoppingBag, Store, Search, Swords, Shield, Sparkles,
-  Image as ImageIcon, ListChecks, Package, BarChart3, MessageSquare,
-  Terminal, Settings, Command,
+  Activity,
+  Bot,
+  ShoppingBag,
+  Store,
+  Search,
+  Swords,
+  Shield,
+  Sparkles,
+  Image as ImageIcon,
+  ListChecks,
+  Package,
+  BarChart3,
+  MessageSquare,
+  Terminal,
+  Settings,
+  Command,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OfficeMini } from "./office-mini";
@@ -37,39 +50,44 @@ export function Sidebar() {
         </div>
         <div className="leading-tight">
           <div className="text-[13px] font-semibold tracking-tight">MerchIQ</div>
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">OpenClaw · Local</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            OpenClaw · Local
+          </div>
         </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         {groups.map((g) => (
           <div key={g} className="mb-4">
-            <div className="px-2 pb-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{g}</div>
-            {items.filter((i) => i.group === g).map((i) => {
-              const active = pathname === i.to;
-              const Icon = i.icon;
-              return (
-                <Link
-                  key={i.to}
-                  to={i.to}
-                  className={cn(
-                    "group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors",
-                    active
-                      ? "bg-secondary text-foreground"
-                      : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
-                  )}
-                >
-                  <Icon className={cn("h-3.5 w-3.5", active ? "text-primary" : "")} />
-                  <span className="truncate">{i.label}</span>
-                </Link>
-              );
-            })}
+            <div className="px-2 pb-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+              {g}
+            </div>
+            {items
+              .filter((i) => i.group === g)
+              .map((i) => {
+                const active = pathname === i.to;
+                const Icon = i.icon;
+                return (
+                  <Link
+                    key={i.to}
+                    to={i.to}
+                    className={cn(
+                      "group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors",
+                      active
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
+                    )}
+                  >
+                    <Icon className={cn("h-3.5 w-3.5", active ? "text-primary" : "")} />
+                    <span className="truncate">{i.label}</span>
+                  </Link>
+                );
+              })}
           </div>
         ))}
       </nav>
 
       <OfficeMini />
-
 
       <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
         <div className="flex items-center justify-between">

@@ -1,21 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PageHeader, Panel, Btn, Field, Input, Select } from "@/components/ui-kit";
+import { useState } from "react";
+import { PageHeader, Panel, Field, Input, Select } from "@/components/ui-kit";
 import { keywords } from "@/lib/mock-data";
 import { Search, TrendingUp } from "lucide-react";
+import { OpenClawTaskButton } from "@/components/openclaw-task-button";
 
 export const Route = createFileRoute("/niche")({
   component: NichePage,
 });
 
 function NichePage() {
+  const [keyword, setKeyword] = useState("dad life");
+  const [platform, setPlatform] = useState("Etsy");
   return (
     <div className="space-y-5">
-      <PageHeader title="Niche Research" subtitle="Discover trending, low-competition POD niches locally." />
+      <PageHeader
+        title="Niche Research"
+        subtitle="Discover trending, low-competition POD niches locally."
+      />
       <Panel>
         <div className="flex flex-wrap items-end gap-3">
-          <div className="min-w-[240px] flex-1"><Field label="Keyword"><Input defaultValue="dad life" /></Field></div>
-          <div className="w-48"><Field label="Platform"><Select><option>Etsy</option><option>Shopify</option><option>Amazon</option><option>Pinterest</option><option>Google Trends</option></Select></Field></div>
-          <Btn variant="primary"><Search className="h-3.5 w-3.5" /> Run research</Btn>
+          <div className="min-w-[240px] flex-1">
+            <Field label="Keyword">
+              <Input value={keyword} onChange={(event) => setKeyword(event.target.value)} />
+            </Field>
+          </div>
+          <div className="w-48">
+            <Field label="Platform">
+              <Select value={platform} onChange={(event) => setPlatform(event.target.value)}>
+                <option>Etsy</option>
+                <option>Shopify</option>
+                <option>Amazon</option>
+                <option>Pinterest</option>
+                <option>Google Trends</option>
+              </Select>
+            </Field>
+          </div>
+          <OpenClawTaskButton
+            label={`Research niche: ${keyword}`}
+            message={`Research the POD niche "${keyword}" using ${platform}. Return demand signals, competition, safe product ideas, and a concise execution plan. Do not scrape, publish, buy, or use paid services unless I approve.`}
+          >
+            <Search className="h-3.5 w-3.5" /> Run research
+          </OpenClawTaskButton>
         </div>
       </Panel>
 
@@ -39,7 +65,10 @@ function NichePage() {
               "World's Okayest Dad · dad hat",
               "Papa Bear · woodland hoodie",
             ].map((i) => (
-              <li key={i} className="flex items-center gap-2 rounded-md border border-border/50 bg-background/40 px-2.5 py-1.5">
+              <li
+                key={i}
+                className="flex items-center gap-2 rounded-md border border-border/50 bg-background/40 px-2.5 py-1.5"
+              >
                 <TrendingUp className="h-3 w-3 text-primary" /> {i}
               </li>
             ))}
@@ -64,13 +93,17 @@ function NichePage() {
                 <td className="px-4 py-2 font-mono">{k.vol.toLocaleString()}</td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-1 w-24 overflow-hidden rounded bg-muted"><div className="h-full bg-warning" style={{ width: `${k.comp * 100}%` }} /></div>
+                    <div className="h-1 w-24 overflow-hidden rounded bg-muted">
+                      <div className="h-full bg-warning" style={{ width: `${k.comp * 100}%` }} />
+                    </div>
                     <span className="font-mono text-[11px]">{(k.comp * 100).toFixed(0)}%</span>
                   </div>
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-1 w-24 overflow-hidden rounded bg-muted"><div className="h-full bg-primary" style={{ width: `${k.opp}%` }} /></div>
+                    <div className="h-1 w-24 overflow-hidden rounded bg-muted">
+                      <div className="h-full bg-primary" style={{ width: `${k.opp}%` }} />
+                    </div>
                     <span className="font-mono text-[11px] text-primary">{k.opp}</span>
                   </div>
                 </td>
@@ -87,11 +120,20 @@ function ScoreCard({ label, score, tone }: { label: string; score: number; tone:
   return (
     <div className="panel p-4">
       <div className="flex items-center justify-between">
-        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label} score</div>
-        <div className={`font-mono text-2xl font-semibold ${tone === "ok" ? "text-primary" : "text-warning"}`}>{score}</div>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          {label} score
+        </div>
+        <div
+          className={`font-mono text-2xl font-semibold ${tone === "ok" ? "text-primary" : "text-warning"}`}
+        >
+          {score}
+        </div>
       </div>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
-        <div className={`h-full ${tone === "ok" ? "bg-primary" : "bg-warning"}`} style={{ width: `${score}%` }} />
+        <div
+          className={`h-full ${tone === "ok" ? "bg-primary" : "bg-warning"}`}
+          style={{ width: `${score}%` }}
+        />
       </div>
     </div>
   );
@@ -102,7 +144,9 @@ function Trend() {
   const max = 80;
   const w = 100;
   const h = 40;
-  const path = pts.map((p, i) => `${i === 0 ? "M" : "L"}${(i / (pts.length - 1)) * w},${h - (p / max) * h}`).join(" ");
+  const path = pts
+    .map((p, i) => `${i === 0 ? "M" : "L"}${(i / (pts.length - 1)) * w},${h - (p / max) * h}`)
+    .join(" ");
   const area = `${path} L${w},${h} L0,${h} Z`;
   return (
     <svg viewBox={`0 0 ${w} ${h}`} className="h-40 w-full" preserveAspectRatio="none">
